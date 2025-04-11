@@ -207,7 +207,9 @@ Featured in [My Windows 95 ChatGPT app](https://www.youtube.com/watch?v=sXBWzFmL
 
 ### To use it
 
+```
 flutter95: # ou le nom que tu lui as donné si tu l'as changé
   git:
     url: https://github.com/TON_NOM_UTILISATEUR/flutter95.git # L'URL de TON fork
     ref: main # Ou la branche/tag où se trouvent tes modifications
+```
