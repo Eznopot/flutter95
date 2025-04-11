@@ -11,6 +11,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  window_manager: ^0.4.3
+  flutter_acrylic: ^1.1.4
 
 dev_dependencies:
   flutter_test:

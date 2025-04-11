@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:window_manager/window_manager.dart';
 
 import 'button95.dart';
 import 'globals.dart';
@@ -12,10 +13,14 @@ class Scaffold95 extends StatelessWidget {
     required this.body,
     this.toolbar,
     this.onClosePressed,
+    this.onMinimizePressed,
+    this.onMaximizePressed,
+    this.action,
   });
 
   final String title;
   final Widget body;
+  final bool? action;
   final Toolbar95? toolbar;
 
   /// Custom behavior of the [CloseButton95]. When [onClosePressed] isn't null,
@@ -26,13 +31,22 @@ class Scaffold95 extends StatelessWidget {
   /// can be popped, and will automatically call [Navigator.pop] when clicked.
   final void Function(BuildContext)? onClosePressed;
 
+  final void Function(BuildContext)? onMinimizePressed;
+  final void Function(BuildContext)? onMaximizePressed;
+
   @override
   Widget build(BuildContext context) {
     return Elevation95(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          WindowHeader95(title: title, onClosePressed: onClosePressed),
+          WindowHeader95(
+            title: title,
+            onClosePressed: onClosePressed,
+            onMaximizePressed: onMaximizePressed,
+            onMinimizePressed: onMinimizePressed,
+            action: action,
+          ),
           const SizedBox(height: 4),
           if (toolbar != null) toolbar!,
           if (toolbar != null) const SizedBox(height: 4),
@@ -48,11 +62,17 @@ class WindowHeader95 extends StatefulWidget {
     super.key,
     required this.title,
     this.onClosePressed,
+    this.onMinimizePressed,
+    this.onMaximizePressed,
+    this.action,
   });
 
   final String? title;
+  final bool? action;
 
   final void Function(BuildContext)? onClosePressed;
+  final void Function(BuildContext)? onMinimizePressed;
+  final void Function(BuildContext)? onMaximizePressed;
 
   @override
   State<WindowHeader95> createState() => _WindowHeader95State();
@@ -64,7 +84,7 @@ class _WindowHeader95State extends State<WindowHeader95> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _canPop = Navigator.of(context).canPop();
+    _canPop = widget.action ?? Navigator.of(context).canPop();
   }
 
   @override
@@ -91,6 +111,14 @@ class _WindowHeader95State extends State<WindowHeader95> {
                 style: Flutter95.headerTextStyle,
               ),
               const Spacer(),
+              if ((widget.action != null && widget.action == true) ||
+                  widget.onMaximizePressed != null)
+                MinimizeButton95(onPressed: widget.onMaximizePressed),
+              const SizedBox(width: 4),
+              if ((widget.action != null && widget.action == true) ||
+                  widget.onMaximizePressed != null)
+                MaximizeButton95(onPressed: widget.onMinimizePressed),
+              const SizedBox(width: 8),
               if (widget.onClosePressed != null)
                 CloseButton95(onPressed: widget.onClosePressed!)
               else if (_canPop)
@@ -125,6 +153,74 @@ class CloseButton95 extends StatelessWidget {
   }
 
   void _defaultOnPressed(BuildContext context) {
-    Navigator.of(context).pop();
+    windowManager.close();
+  }
+}
+
+class MaximizeButton95 extends StatelessWidget {
+  final void Function(BuildContext)? onPressed;
+
+  const MaximizeButton95({super.key, this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return Button95(
+      height: 24,
+      padding: EdgeInsets.zero,
+      onTap: onPressed != null
+          ? () => onPressed!(context)
+          : () => _defaultOnPressed(context),
+      child: const Icon(
+        Icons.crop_square_sharp,
+        size: 20,
+      ),
+    );
+  }
+
+  void _defaultOnPressed(BuildContext context) {
+    windowManager.isMaximizable().then((bool canMax) {
+      if (canMax) {
+        windowManager.isMaximized().then((bool isMax) {
+          if (isMax) {
+            windowManager.unmaximize();
+          } else {
+            windowManager.maximize();
+          }
+        });
+      }
+    });
+  }
+}
+
+class MinimizeButton95 extends StatelessWidget {
+  final void Function(BuildContext)? onPressed;
+
+  const MinimizeButton95({super.key, this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return Button95(
+      height: 24,
+      padding: EdgeInsets.zero,
+      onTap: onPressed != null
+          ? () => onPressed!(context)
+          : () => _defaultOnPressed(context),
+      child: const Icon(
+        Icons.minimize,
+        size: 20,
+      ),
+    );
+  }
+
+  void _defaultOnPressed(BuildContext context) {
+    windowManager.isMinimizable().then((bool canMax) {
+      if (canMax) {
+        windowManager.isMinimized().then((bool isMax) {
+          if (!isMax) {
+            windowManager.minimize();
+          }
+        });
+      }
+    });
   }
 }

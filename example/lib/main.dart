@@ -2,7 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter95/flutter95.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Flutter95Window.init();
   runApp(const Flutter95App());
 }
 
@@ -33,6 +35,7 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold95(
+      action: true,
       title: 'Flutter95',
       toolbar: Toolbar95(actions: [
         Item95(
