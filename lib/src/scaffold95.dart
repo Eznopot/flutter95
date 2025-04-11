@@ -36,24 +36,53 @@ class Scaffold95 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Elevation95(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          WindowHeader95(
-            title: title,
-            onClosePressed: onClosePressed,
-            onMaximizePressed: onMaximizePressed,
-            onMinimizePressed: onMinimizePressed,
-            action: action,
+    return Container(
+        margin: const EdgeInsets.all(4),
+        decoration: Flutter95.elevatedDecorationOutside,
+        child: Container(
+          decoration: Flutter95.elevatedDecoration,
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            appBar: PreferredSize(
+              preferredSize: const Size.fromHeight(kToolbarHeight),
+              child: WindowHeader95(
+                title: title,
+                onClosePressed: onClosePressed,
+                onMaximizePressed: onMaximizePressed,
+                onMinimizePressed: onMinimizePressed,
+                action: action,
+              ),
+            ),
+            body: Theme(
+              data: ThemeData(
+                  scrollbarTheme: ScrollbarThemeData(
+                // Toujours visible
+                interactive: false,
+                thumbColor: WidgetStateProperty.all(Colors.transparent),
+                thumbVisibility: WidgetStateProperty.all(false),
+                trackVisibility: WidgetStateProperty.all(false),
+
+                // Épaisseur (taille classique)
+                thickness: WidgetStateProperty.all(16.0),
+
+                // Forme rectangulaire SANS coins arrondis
+                radius: Radius.zero,
+              )),
+              child: SingleChildScrollView(
+                child: Flex(
+                  mainAxisSize: MainAxisSize.max,
+                  direction: Axis.vertical,
+                  children: <Widget>[
+                    const SizedBox(height: 4),
+                    if (toolbar != null) toolbar!,
+                    if (toolbar != null) const SizedBox(height: 4),
+                    body
+                  ],
+                ),
+              ),
+            ),
           ),
-          const SizedBox(height: 4),
-          if (toolbar != null) toolbar!,
-          if (toolbar != null) const SizedBox(height: 4),
-          body,
-        ],
-      ),
-    );
+        ));
   }
 }
 
@@ -91,41 +120,38 @@ class _WindowHeader95State extends State<WindowHeader95> {
   Widget build(BuildContext context) {
     return SafeArea(
       bottom: false,
-      child: Padding(
-        padding: const EdgeInsets.only(top: 2.0, left: 2.0, right: 2.0),
-        child: Container(
-          height: 33,
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Flutter95.headerDark,
-                Flutter95.headerLight,
-              ],
-            ),
-          ),
-          child: Row(
-            children: [
-              const SizedBox(width: 8),
-              Text(
-                widget.title!,
-                style: Flutter95.headerTextStyle,
-              ),
-              const Spacer(),
-              if ((widget.action != null && widget.action == true) ||
-                  widget.onMaximizePressed != null)
-                MinimizeButton95(onPressed: widget.onMaximizePressed),
-              const SizedBox(width: 4),
-              if ((widget.action != null && widget.action == true) ||
-                  widget.onMaximizePressed != null)
-                MaximizeButton95(onPressed: widget.onMinimizePressed),
-              const SizedBox(width: 8),
-              if (widget.onClosePressed != null)
-                CloseButton95(onPressed: widget.onClosePressed!)
-              else if (_canPop)
-                const CloseButton95(),
-              const SizedBox(width: 4),
+      child: Container(
+        height: 33,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Flutter95.headerDark,
+              Flutter95.headerLight,
             ],
           ),
+        ),
+        child: Row(
+          children: [
+            const SizedBox(width: 8),
+            Text(
+              widget.title!,
+              style: Flutter95.headerTextStyle,
+            ),
+            const Spacer(),
+            if ((widget.action != null && widget.action == true) ||
+                widget.onMaximizePressed != null)
+              MinimizeButton95(onPressed: widget.onMaximizePressed),
+            const SizedBox(width: 4),
+            if ((widget.action != null && widget.action == true) ||
+                widget.onMaximizePressed != null)
+              MaximizeButton95(onPressed: widget.onMinimizePressed),
+            const SizedBox(width: 8),
+            if (widget.onClosePressed != null)
+              CloseButton95(onPressed: widget.onClosePressed!)
+            else if (_canPop)
+              const CloseButton95(),
+            const SizedBox(width: 4),
+          ],
         ),
       ),
     );

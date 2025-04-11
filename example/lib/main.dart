@@ -207,6 +207,9 @@ class ScreenThatCanPop extends StatelessWidget {
     return Scaffold95(
       title: 'Screen that can pop',
       body: Container(),
+      onClosePressed: (BuildContext context) {
+        Navigator.pop(context);
+      },
     );
   }
 }

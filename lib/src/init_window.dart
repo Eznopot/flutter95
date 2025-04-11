@@ -5,7 +5,7 @@ import 'package:flutter_acrylic/window.dart' as Acrylic;
 import 'package:window_manager/window_manager.dart';
 
 class Flutter95Window {
-  static Future<void> init() async {
+  static Future<void> init({Size? size}) async {
     await windowManager.ensureInitialized();
 
     WindowOptions windowOptions = const WindowOptions(
@@ -17,6 +17,7 @@ class Flutter95Window {
     );
 
     windowManager.waitUntilReadyToShow(windowOptions, () async {
+      await windowManager.setSize(size ?? const Size(400, 500));
       await windowManager.setAsFrameless();
       await windowManager.show();
       await windowManager.focus();
